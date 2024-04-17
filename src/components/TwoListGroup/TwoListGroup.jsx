@@ -73,6 +73,12 @@ export default function TwoListGroup() {
         }
     }
 
+    const removeSelectedBikes = () => {
+        setBikesLeft([...bikesLeft.filter(b => !selectedBikesLeft.includes(b))]);
+        setBikesRight([...bikesRight.filter(b => !selectedBikesRight.includes(b))]);
+        clearSelections();
+    }
+
     return (
         <Container>
             <Row>
@@ -86,6 +92,7 @@ export default function TwoListGroup() {
                     <Button action onClick={() => moveBikes("right")}>{">"}</Button>
                     <Button action onClick={() => moveBikes("left")}>{"<"}</Button>
                     <Button action onClick={() => moveAll("left")}>{"<<"}</Button>
+                    <Button action onClick={() => removeSelectedBikes()}>{"Del"}</Button>
                 </Col>
 
                 <Col md="3">
