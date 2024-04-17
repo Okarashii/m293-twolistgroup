@@ -41,6 +41,7 @@ const moveAll = (dir) => {
         setBikesLeft([...bikesLeft, ...bikesRight]);
         setBikesRight([]);
     }
+    setSelectedBike("");
 }
 
 return (
@@ -60,7 +61,7 @@ return (
 
             <Col md="3">
                 <ListGroup>
-                {bikesRight.map(bike => <ListGroup.Item active={selectedBike === bike} action onClick={() => setSelectedBike(bike)} key={bike}>{bike}</ListGroup.Item>)}
+                    {bikesRight.map(bike => <ListGroup.Item active={selectedBike === bike} action onClick={() => setSelectedBike(bike)} key={bike}>{bike}</ListGroup.Item>)}
                 </ListGroup>
             </Col>
         </Row>
