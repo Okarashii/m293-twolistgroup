@@ -5,21 +5,23 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 
 export default function TwoListGroup() {
     const [bikesLeft, setBikesLeft] = useState([
-        'Honda CBR 1000',
-        'Ducati Monster 1200s',
-        'Yamaha MT-01',
-        'KTM Superduke 1200',
-        'Triumph Triple Speed',
+        {id: 0, make: 'Honda', model: "CBR 1000", ps: 191, capacity: 1000},
+        {id: 1, make: 'Ducati', model: "Monster 1200s", ps: 147, capacity: 1198},
+        {id: 2, make: 'Yamaha', model: "MT-01", ps: 90, capacity: 1670},
+        {id: 3, make: 'KTM', model: "Superduke 1200", ps: 177, capacity: 1301},
+        {id: 4, make: 'Triumph', model: "Triple Speed", ps: 148, capacity: 1050},
     ]);
 
-    const [bikesRight, setBikesRight] = useState([""]);
-    const [selectedBikesLeft, setSelectedBikesLeft] = useState([""]);
-    const [selectedBikesRight, setSelectedBikesRight] = useState([""]);
+    const [bikesRight, setBikesRight] = useState([{id: -1, make: '', model: "", ps: 0, capacity: 0}]);
+    const [selectedBikesLeft, setSelectedBikesLeft] = useState([{id: -1, make: '', model: "", ps: 0, capacity: 0}]);
+    const [selectedBikesRight, setSelectedBikesRight] = useState([{id: -1, make: '', model: "", ps: 0, capacity: 0}]);
+    const [displayedInfoIds, setDisplayedInfoIds] = useState([-1]);
 
     useEffect(() => {
         setBikesRight([]);
         setSelectedBikesLeft([]);
         setSelectedBikesRight([]);
+        setDisplayedInfoIds([]);
     }, [])
 
     const clearSelections = () => {
@@ -38,6 +40,8 @@ export default function TwoListGroup() {
             setBikesRight(bikesRight.filter(b => !selectedBikesRight.includes(b)));
             clearSelections();
         }
+
+        setDisplayedInfoIds([]);
     }
 
     const moveAll = (dir) => {
@@ -50,6 +54,7 @@ export default function TwoListGroup() {
             setBikesRight([]);
         }
         clearSelections();
+        setDisplayedInfoIds([]);
     }
 
     const bikeSelectionHandler = (bike, dir) => {
@@ -79,12 +84,46 @@ export default function TwoListGroup() {
         clearSelections();
     }
 
+    const infoButtonHandler = () => {
+        if (displayedInfoIds.length > 0) {
+            setDisplayedInfoIds([]);
+        }
+        
+        setDisplayedInfoIds([
+            ...selectedBikesLeft.filter(b => !displayedInfoIds.includes(b.id)).map(b => b.id),
+            ...selectedBikesRight.filter(b => !displayedInfoIds.includes(b.id)).map(b => b.id)
+        ]);
+        clearSelections();
+    }
+
     return (
         <Container>
             <Row>
                 <Col md="3">
                     <ListGroup>
-                        {bikesLeft.map(bike => <ListGroup.Item active={selectedBikesLeft.includes(bike)} action onClick={() => bikeSelectionHandler(bike, "left")} key={bike}>{bike}</ListGroup.Item>)}
+                        {bikesLeft.map(bike => {
+                            if (!displayedInfoIds.includes(bike.id)) {
+                                return (<ListGroup.Item
+                                    active={selectedBikesLeft.includes(bike)}
+                                    action
+                                    onClick={() => bikeSelectionHandler(bike, "left")}
+                                    key={bike.id}>
+                                    {bike.make} {bike.model}
+                                </ListGroup.Item>)
+                            }
+                            else {
+                                return (<ListGroup.Item
+                                    active={selectedBikesLeft.includes(bike)}
+                                    action
+                                    onClick={() => bikeSelectionHandler(bike, "left")}
+                                    key={bike.id}>
+                                    Marke: {bike.make}<br/>
+                                    Typ: {bike.model}<br/>
+                                    PS: {bike.ps}<br/>
+                                    Hubraum: {bike.capacity}cm³
+                                </ListGroup.Item>)
+                            }
+                        })}
                     </ListGroup>
                 </Col>
                 <Col md="auto" className='btn-group-vertical'>
@@ -93,12 +132,35 @@ export default function TwoListGroup() {
                     <Button action onClick={() => moveBikes("left")}>{"<"}</Button>
                     <Button action onClick={() => moveAll("left")}>{"<<"}</Button>
                     <Button action onClick={() => removeSelectedBikes()}>{"Del"}</Button>
+                    <Button action onClick={() => infoButtonHandler()}>{"Info"}</Button>
                 </Col>
 
                 <Col md="3">
-                    <ListGroup>
-                        {bikesRight.map(bike => <ListGroup.Item active={selectedBikesRight.includes(bike)} action onClick={() => bikeSelectionHandler(bike, "right")} key={bike}>{bike}</ListGroup.Item>)}
-                    </ListGroup>
+                <ListGroup>
+                    {bikesRight.map(bike => {
+                        if (!displayedInfoIds.includes(bike.id)) {
+                            return (<ListGroup.Item
+                                active={selectedBikesRight.includes(bike)}
+                                action
+                                onClick={() => bikeSelectionHandler(bike, "right")}
+                                key={bike.id}>
+                                {bike.make} {bike.model}
+                            </ListGroup.Item>)
+                        }
+                        else {
+                            return (<ListGroup.Item
+                                active={selectedBikesRight.includes(bike)}
+                                action
+                                onClick={() => bikeSelectionHandler(bike, "right")}
+                                key={bike.id}>
+                                Marke: {bike.make}<br/>
+                                Typ: {bike.model}<br/>
+                                PS: {bike.ps}<br/>
+                                Hubraum: {bike.capacity}cm³
+                            </ListGroup.Item>)
+                        }
+                    })}
+                </ListGroup>
                 </Col>
             </Row>
         </Container>
